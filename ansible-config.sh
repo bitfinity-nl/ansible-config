@@ -198,6 +198,10 @@ function add-ansible-node () {
   sshpass -p "$LOC_PWD" ssh $LOC_ADM@$ANS_NOD 'echo '$LOC_PWD'| \
   sudo -S passwd -dl '$ANS_USR''
 
+  echo "[INFO] Ansible | 1.8.1 Title: Configure UFW for Ansible"
+  sudo ufw allow ssh
+  sudo ufw enable
+
 }
 
 
