@@ -83,7 +83,7 @@ function install-ansible-server() {
   then
     echo "[INFO] Ansible | 1.4.1 Awnser: Directory $str_ANS_PROD does not exist."
     echo "[INFO] Ansible | 1.4.2 Awnser: Copy /etc/ansible to $str_ANS_PROD"
-    sudo cp -r /etc/ansible /opt/$str_ANS_PROD
+    sudo cp -r /etc/ansible $str_ANS_PROD
     sudo mkdir -p $str_ANS_PROD/group_vars
   else
     echo "[INFO] Ansible | 1.4.1 Awnser: Directory $str_ANS_PROD exist."
@@ -96,7 +96,7 @@ function install-ansible-server() {
   then
     echo "[INFO] Ansible | 1.5.1 Awnser: Directory $str_ANS_TEST does not exist."
     echo "[INFO] Ansible | 1.5.2 Awnser: Copy /etc/ansible to $str_ANS_TEST"
-    sudo cp -r /etc/ansible /opt/$str_ANS_TEST
+    sudo cp -r /etc/ansible $str_ANS_TEST
     sudo mkdir -p $str_ANS_TEST/group_vars
   else
     echo "[INFO] Ansible | 1.5.1 Awnser: Directory $str_ANS_TEST exist."
