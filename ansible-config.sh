@@ -33,7 +33,7 @@ function install-ansible-server() {
 
   # ---
   echo "[INFO] Ansible | 1.1.0 Title: Continue script if logged in as root."
-  strUSR_ANS=root
+  strUSR_ANS=ansible
   if [ $strUSR_ANS = $(whoami) ]
   then
     echo "[INFO] Ansible | 1.1.1 Awnser: Current user is $strUSR_ANS."
