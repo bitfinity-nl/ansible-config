@@ -33,7 +33,7 @@ function install-ansible-server() {
 
   # ---
   echo "[INFO] Ansible | 1.1.0 Title: Continue script if logged in as root."
-  strUSR_ANS=ansible
+  strUSR_ANS=root
   if [ $strUSR_ANS = $(whoami) ]
   then
     echo "[INFO] Ansible | 1.1.1 Awnser: Current user is $strUSR_ANS."
@@ -45,11 +45,15 @@ function install-ansible-server() {
 
   # ---
   echo "[INFO] Ansible | 1.2.0 Title: Generate privatekey for user ansible server."
-  strFILE_RSA=~/.ssh/id_rsa
+  strDIR_RSA=/home/ansible/.ssh
+  strFILE_RSA=/home/ansible/.ssh/id_rsa
+  
   if [ ! -f $strFILE_RSA ]
   then
     echo "[INFO] Ansible | 1.2.1 Awnser: File $strFILE_RSA does not exist."
-    sudo ssh-keygen -t rsa -f $strFILE_RSA -b 4096 -q -P ""
+    mkdir -p $strDIR_RSA
+    ssh-keygen -t rsa -f $strFILE_RSA -b 4096 -q -P ""
+    chown ansible:ansible -R $strDIR_RSA
   else
     echo "[INFO] Ansible | 1.2.1 Awnser: File $strFILE_RSA exist."
     #exit
