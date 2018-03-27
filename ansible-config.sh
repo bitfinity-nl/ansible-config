@@ -44,24 +44,53 @@ function install-ansible-server() {
   # ---
 
   # ---
-  echo "[INFO] Ansible | 1.2.0 Title: Generate privatekey for user ansible server."
+  ANS_USR=ansible
+  ANS_USR_EXISTS=$(getent passwd | grep ansible | cut -d ':' -f 1) 
+
+  echo "[INFO] Ansible | 1.2.0 Title: Create $ANS_USR."
+
+  if [ "$ANS_USR_EXISTS" == "$ANS_USR" ]; then
+    echo "[INFO] Ansible | 1.2.1 Awnser: User $ANS_USR exists."
+  else
+    echo "[INFO] Ansible | 1.2.1 Awnser: User $ANS_USR not exists"
+    echo "[INFO] Ansible | 1.2.2 Awnser: Creating user $ANS_USR."
+    addgroup --group ansible
+
+    adduser --home /home/$ANS_USR \
+    --shell /bin/bash \
+    --disabled-password \
+    --gecos GECOS \
+    --ingroup $ANS_USR \
+    $ANS_USR
+
+    usermod -a -G sudo $ANS_USR
+
+    echo "ansible ALL=NOPASSWD: ALL" > /etc/sudoers.d/$ANS_USR
+    sudo -S chmod 0440 /etc/sudoers.d/$ANS_USR
+
+  fi
+
+  # ---
+
+  # ---
+  echo "[INFO] Ansible | 1.3.0 Title: Generate privatekey for user ansible server."
   strDIR_RSA=/home/ansible/.ssh
   strFILE_RSA=/home/ansible/.ssh/id_rsa
-  
+
   if [ ! -f $strFILE_RSA ]
   then
-    echo "[INFO] Ansible | 1.2.1 Awnser: File $strFILE_RSA does not exist."
+    echo "[INFO] Ansible | 1.3.1 Awnser: File $strFILE_RSA does not exist."
     mkdir -p $strDIR_RSA
     ssh-keygen -t rsa -f $strFILE_RSA -b 4096 -q -P ""
     chown ansible:ansible -R $strDIR_RSA
   else
-    echo "[INFO] Ansible | 1.2.1 Awnser: File $strFILE_RSA exist."
+    echo "[INFO] Ansible | 1.3.1 Awnser: File $strFILE_RSA exist."
     #exit
   fi
   # ---
 
   # ---
-  echo "[INFO] Ansible | 1.3.0 Title: Add repository and install Ansible"
+  echo "[INFO] Ansible | 1.4.0 Title: Add repository and install Ansible"
   # update database
   sudo updatedb
 
@@ -69,67 +98,72 @@ function install-ansible-server() {
   strFILE_PPA=$(locate *-ansible-*.list)
   if [ -z $strFILE_PPA ]
   then
-    echo "[INFO] Ansible | 1.3.1 Awnser: Repository ppa:ansible:/ansible does not exist."
-    echo "[INFO] Ansible | 1.3.2 Awnser: Adding repository ppa:ansible:/ansible."
+    echo "[INFO] Ansible | 1.4.1 Awnser: Repository ppa:ansible:/ansible does not exist."
+    echo "[INFO] Ansible | 1.4.2 Awnser: Adding repository ppa:ansible:/ansible."
     sudo apt-add-repository ppa:ansible/ansible
     sudo apt-get update
     sudo apt-get install -y ansible
   else
-    echo "[INFO] Ansible | 1.3.1 Awnser: Repository $strFILE_PPA exist."
+    echo "[INFO] Ansible | 1.4.1 Awnser: Repository $strFILE_PPA exist."
     #exit
   fi
   # ---
 
   # ---
-  echo "[INFO] Ansible | 1.4.0 Title: Create Ansible production environment"
+  echo "[INFO] Ansible | 1.5.0 Title: Create Ansible production environment"
   str_ANS_PROD=/opt/ansible-prod
   if [ ! -d "$str_ANS_PROD" ]
   then
-    echo "[INFO] Ansible | 1.4.1 Awnser: Directory $str_ANS_PROD does not exist."
-    echo "[INFO] Ansible | 1.4.2 Awnser: Copy /etc/ansible to $str_ANS_PROD"
+    echo "[INFO] Ansible | 1.5.1 Awnser: Directory $str_ANS_PROD does not exist."
+    echo "[INFO] Ansible | 1.5.2 Awnser: Copy /etc/ansible to $str_ANS_PROD"
     sudo cp -r /etc/ansible $str_ANS_PROD
     sudo mkdir -p $str_ANS_PROD/group_vars
-    sudo chown ansible:ansible -R $str_ANS_PROD/group_vars
+    sudo chown ansible:ansible -R $str_ANS_PROD
   else
-    echo "[INFO] Ansible | 1.4.1 Awnser: Directory $str_ANS_PROD exist."
+    echo "[INFO] Ansible | 1.5.1 Awnser: Directory $str_ANS_PROD exist."
   fi
 
   # ---
-  echo "[INFO] Ansible | 1.5.0 Title: Create Ansible test environment"
+  echo "[INFO] Ansible | 1.6.0 Title: Create Ansible test environment"
   str_ANS_TEST=/opt/ansible-test
   if [ ! -d "$str_ANS_TEST" ]
   then
-    echo "[INFO] Ansible | 1.5.1 Awnser: Directory $str_ANS_TEST does not exist."
-    echo "[INFO] Ansible | 1.5.2 Awnser: Copy /etc/ansible to $str_ANS_TEST"
+    echo "[INFO] Ansible | 1.6.1 Awnser: Directory $str_ANS_TEST does not exist."
+    echo "[INFO] Ansible | 1.6.2 Awnser: Copy /etc/ansible to $str_ANS_TEST"
     sudo cp -r /etc/ansible $str_ANS_TEST
     sudo mkdir -p $str_ANS_TEST/group_vars
-    sudo chown ansible:ansible -R $str_ANS_TEST/group_vars
+    sudo chown ansible:ansible -R $str_ANS_TEST
   else
-    echo "[INFO] Ansible | 1.5.1 Awnser: Directory $str_ANS_TEST exist."
+    echo "[INFO] Ansible | 1.6.1 Awnser: Directory $str_ANS_TEST exist."
   fi
   # ---
 }
 
 function remove-ansible-server () {
 
-    echo "---------------------------"
-    echo "- Remove Ansible server   -"
-    echo "---------------------------"
+  echo "---------------------------"
+  echo "- Remove Ansible server   -"
+  echo "---------------------------"
 
-    echo "[INFO] Ansible | 1.4.0 Title: Remove Ansible test environment"
-    str_ANS_TEST=/opt/ansible-test
-    rm -R $str_ANS_TEST
+  echo "[INFO] Ansible | 1.4.0 Title: Remove Ansible test environment"
+  str_ANS_TEST=/opt/ansible-test
+  rm -R $str_ANS_TEST
 
-    echo "[INFO] Ansible | 1.5.0 Title: Remove Ansible production environment"
-    str_ANS_PROD=/opt/ansible-prod
-    rm -R $str_ANS_PROD
+  echo "[INFO] Ansible | 1.5.0 Title: Remove Ansible production environment"
+  str_ANS_PROD=/opt/ansible-prod
+  rm -R $str_ANS_PROD
 
-    echo "[INFO] Ansible | 1.3.0 Title: Remove Ansible and repository"
-    apt-get autoremove -y ansible
+  echo "[INFO] Ansible | 1.3.0 Title: Remove Ansible and repository"
+  apt-get autoremove -y ansible
 
-    strFILE_PPA=$(locate *-ansible-*.list)
-    add-apt-repository ppa:ansible/ansible --remove
-    rm -R $strFILE_PPA
+  strFILE_PPA=$(locate *-ansible-*.list)
+  add-apt-repository ppa:ansible/ansible --remove
+  rm -R $strFILE_PPA
+
+  echo "[INFO] Ansible | 1.3.0 Title: Remove Ansible user"
+  deluser ansible --remove-home
+  delgroup ansible
+  rem /etc/sudoers.d/$ANS_USR
 
 }
 
