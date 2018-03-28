@@ -160,10 +160,18 @@ function remove-ansible-server () {
   add-apt-repository ppa:ansible/ansible --remove
   rm -R $strFILE_PPA
 
-  echo "[INFO] Ansible | 1.3.0 Title: Remove Ansible user"
+  echo "[INFO] Ansible | 1.3.0 Title: Remove user: ansible"
   deluser ansible --remove-home
+
+  echo "[INFO] Ansible | 1.3.0 Title: Remove group: ansible"
   delgroup ansible
-  rem /etc/sudoers.d/$ANS_USR
+
+  echo "[INFO] Ansible | 1.3.0 Title: Remove sudoers profile: ansible"
+  rm /etc/sudoers.d/$ANS_USR
+
+
+
+
 
 }
 
@@ -205,12 +213,14 @@ function add-ansible-node () {
   fi
   # ---
 
-
   echo "[INFO] Ansible | 1.1.0 Title: Generate ans-user.sh to $ANS_NOD:/home/$LOC_ADM"
-  sshpass -p "$LOC_PWD" ssh $LOC_ADM@$ANS_NOD '
+  sshpass -p "$LOC_PWD" ssh -oStrictHostKeyChecking=no $LOC_ADM@$ANS_NOD '
+  ### <-- Begin remote install script --> ### 
   echo "#!/bin/bash
   adduser --home /home/'$ANS_USR' --shell /bin/bash --ingroup \
   sudo --disabled-password --gecos '"''"' '$ANS_USR'
+
+
 
   echo '$ANS_USR:$ANS_PWD' | chpasswd
 
@@ -242,6 +252,7 @@ function add-ansible-node () {
   sudo ufw allow ssh
   sudo ufw enable
 
+  ### <-- End Remote install script --> ###
 }
 
 
