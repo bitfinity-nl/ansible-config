@@ -4,9 +4,18 @@
 # - run this script as an ansible user.
 clear
 
-echo "---------------------------------"
-echo "- Ansible Configuration Manager -"
-echo "---------------------------------"
+echo "----------------------------------------"
+echo " Title:  Ansible Configuration Manager  "
+echo "                                        "
+echo " Author: Luc Rutten                     "
+echo " Version: 1.0                           "
+echo "                                        "
+echo " Descrription:                          "
+echo "   - Install Ansible server             "
+echo "   - Remove Ansible server              "
+echo "   - Add node to Ansible server         "
+echo "                                        "
+echo "----------------------------------------"
 echo
 echo "example:"
 echo "  - install ansible server: sudo ./ansible-conf.sh install-ansible-server"
@@ -137,6 +146,23 @@ function install-ansible-server() {
     echo "[INFO] Ansible | 1.6.1 Awnser: Directory $str_ANS_TEST exist."
   fi
   # ---
+
+  # ---
+  echo "[INFO] Ansible | 1.6.0 Title: Create Ansible local repository"
+  str_ANS_RES=/opt/resource
+  if [ ! -d "$str_ANS_REP" ]
+  then
+    echo "[INFO] Ansible | 1.6.1 Awnser: Directory $str_ANS_RES does not exist."
+    echo "[INFO] Ansible | 1.6.2 Awnser: Copy /etc/ansible to $str_ANS_RES"
+    sudo apt-get install -y apache2
+    sudo mkdir -p $str_ANS_RES
+    sudo chown ansible:ansible -R $str_ANS_RES
+    ln -s $str_ANS_RES /var/www/html/
+  else
+    echo "[INFO] Ansible | 1.6.1 Awnser: Directory $str_ANS_REP exist."
+  fi
+  # ---
+
 }
 
 function remove-ansible-server () {
@@ -154,7 +180,7 @@ function remove-ansible-server () {
   rm -R $str_ANS_PROD
 
   echo "[INFO] Ansible | 1.3.0 Title: Remove Ansible and repository"
-  apt-get autoremove -y ansible
+  apt-get autoremove -y ansible apache2
 
   strFILE_PPA=$(locate *-ansible-*.list)
   add-apt-repository ppa:ansible/ansible --remove
