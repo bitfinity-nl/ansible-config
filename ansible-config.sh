@@ -52,7 +52,7 @@ function install-ansible-server() {
   fi
   # ---
 
-  # ---
+  # --- Account: create Ansible Account ---
   ANS_USR=ansible
   ANS_USR_EXISTS=$(getent passwd | grep ansible | cut -d ':' -f 1) 
 
@@ -81,7 +81,7 @@ function install-ansible-server() {
 
   # ---
 
-  # ---
+  # --- Private Key ---
   echo "[INFO] Ansible | 1.3.0 Title: Generate privatekey for user ansible server."
   strDIR_RSA=/home/ansible/.ssh
   strFILE_RSA=/home/ansible/.ssh/id_rsa
@@ -98,7 +98,7 @@ function install-ansible-server() {
   fi
   # ---
 
-  # ---
+  # --- Ansible server ---
   echo "[INFO] Ansible | 1.4.0 Title: Add repository and install Ansible"
   # update database
   sudo updatedb
@@ -118,7 +118,7 @@ function install-ansible-server() {
   fi
   # ---
 
-  # ---
+  # --- 
   echo "[INFO] Ansible | 1.5.0 Title: Create Ansible production environment"
   str_ANS_PROD=/opt/ansible-prod
   if [ ! -d "$str_ANS_PROD" ]
@@ -147,20 +147,29 @@ function install-ansible-server() {
   fi
   # ---
 
-  # ---
-  echo "[INFO] Ansible | 1.6.0 Title: Create Ansible local repository"
+  # --- Apache2 repository ---
+  echo "[INFO] Ansible | 1.7.0 Title: Create Ansible local repository"
   str_ANS_RES=/opt/resource
   if [ ! -d "$str_ANS_REP" ]
   then
-    echo "[INFO] Ansible | 1.6.1 Awnser: Directory $str_ANS_RES does not exist."
-    echo "[INFO] Ansible | 1.6.2 Awnser: Copy /etc/ansible to $str_ANS_RES"
+    echo "[INFO] Ansible | 1.7.1 Awnser: Directory $str_ANS_RES does not exist."
+    echo "[INFO] Ansible | 1.7.2 Awnser: Copy /etc/ansible to $str_ANS_RES"
     sudo apt-get install -y apache2
     sudo mkdir -p $str_ANS_RES
     sudo chown ansible:ansible -R $str_ANS_RES
     ln -s $str_ANS_RES /var/www/html/
   else
-    echo "[INFO] Ansible | 1.6.1 Awnser: Directory $str_ANS_REP exist."
+    echo "[INFO] Ansible | 1.7.1 Awnser: Directory $str_ANS_REP exist."
   fi
+  # ---
+
+  # --- Firewall ---
+  echo "[INFO] Ansible | 1.8.0 Title: Allow OpenSSH (UFW)"
+  sudo ufw allow OpenSSH
+  echo "[INFO] Ansible | 1.8.1 Title: Allow Apache (UFW)"
+  sudo ufw allow Apache
+  echo "[INFO] Ansible | 1.8.2 Title: Enable Local Firewall (UFW)"
+  sudo ufw enable
   # ---
 
 }
