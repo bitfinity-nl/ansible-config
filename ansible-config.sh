@@ -252,10 +252,14 @@ function add-ansible-node () {
   sshpass -p "$LOC_PWD" ssh -oStrictHostKeyChecking=no $LOC_ADM@$ANS_NOD '
   ### <-- Begin remote install script --> ### 
   echo "#!/bin/bash
-  adduser --home /home/'$ANS_USR' --shell /bin/bash --ingroup \
-  sudo --disabled-password --gecos '"''"' '$ANS_USR'
 
+  addgroup ansible
 
+  adduser --home /home/'$ANS_USR' \
+    --shell /bin/bash \
+    --ingroup ansible \
+    --disabled-password \
+    --gecos '"''"' '$ANS_USR'
 
   echo '$ANS_USR:$ANS_PWD' | chpasswd
 
